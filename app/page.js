@@ -16,6 +16,9 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [files, setFiles] = useState([]);
   const [params, setParams] = useState(defaultParams);
+  const [status, setStatus] = useState("");
+const [resultUrl, setResultUrl] = useState("");
+const [isGenerating, setIsGenerating] = useState(false);
 function updateParam(index, field, value) {
   setParams((old) =>
     old.map((item, i) =>
@@ -31,7 +34,133 @@ function addParam() {
   ]);
 }
 
-function removeParam(index) {
+function buildParams() {
+  const output = {};
+
+  params.forEach((param) => {
+    if (!param.key.trim()) return;
+
+    let value = param.value;
+
+    if (param.type === "boolean") {
+      value = param.value === "true";
+    } else if (param.type === "number") {
+      value = Number(param.value);
+    }
+
+    output[param.key] = value;
+  });
+
+  return output;
+}
+  async function uploadImages() {
+  const urls = [];
+
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Image upload failed.");
+    }
+
+    urls.push(data.url);
+  }
+
+  return urls;
+}
+  async function createTask(imageUrls) {
+  const response = await fetch("/api/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      prompt,
+      image_urls: imageUrls,
+      params: buildParams(),
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Failed to create image task.");
+  }
+
+  return data.taskId;
+}
+  async function checkStatus(taskId) {
+  const response = await fetch(
+    `/api/status?taskId=${encodeURIComponent(taskId)}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Failed to check task status.");
+  }
+
+  return data;
+}
+  async function handleGenerate() {
+  if (!prompt.trim()) {
+    setStatus("Please enter a prompt.");
+    return;
+  }
+
+  try {
+    setIsGenerating(true);
+    setResultUrl("");
+    setStatus("Uploading reference images...");
+
+    const imageUrls = await uploadImages();
+
+    setStatus("Creating image task...");
+    const taskId = await createTask(imageUrls);
+
+    setStatus("Generating image...");
+
+    // Poll Kie until the task finishes
+    while (true) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      const task = await checkStatus(taskId);
+
+      if (task.state === "success") {
+        const result = JSON.parse(task.resultJson || "{}");
+        const urls = result.resultUrls || [];
+
+        if (!urls.length) {
+          throw new Error("Task succeeded but no image URL was returned.");
+        }
+
+        setResultUrl(urls[0]);
+        setStatus("Done!");
+        break;
+      }
+
+      if (task.state === "fail") {
+        throw new Error(
+          task.failMsg || "Image generation failed."
+        );
+      }
+    }
+  } catch (error) {
+    setStatus(error.message || "Something went wrong.");
+  } finally {
+    setIsGenerating(false);
+  }
+}
+  function removeParam(index) {
   setParams((old) => old.filter((_, i) => i !== index));
 }
   function resetDefaults() {
@@ -130,11 +259,33 @@ function removeParam(index) {
   <button type="button" onClick={resetDefaults}>
   ↻ Reset Defaults
 </button>
+  {status && (
+  <p>{status}</p>
+)}
+
+{resultUrl && (
+  <section>
+    <label>RESULT</label>
+    <img
+      src={resultUrl}
+      alt="Generated result"
+      style={{
+        width: "100%",
+        maxWidth: "700px",
+        borderRadius: "12px",
+      }}
+    />
+  </section>
+)}
       </section>
 
-      <button type="button">
-        GENERATE IMAGE
-      </button>
+     <button
+  type="button"
+  onClick={handleGenerate}
+  disabled={isGenerating}
+>
+  {isGenerating ? "GENERATING..." : "GENERATE IMAGE"}
+</button>
     </main>
   );
 }

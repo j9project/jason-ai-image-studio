@@ -34,6 +34,28 @@ function addParam() {
 function removeParam(index) {
   setParams((old) => old.filter((_, i) => i !== index));
 }
+  function resetDefaults() {
+  setParams(defaultParams.map((item) => ({ ...item })));
+}
+  useEffect(() => {
+  try {
+    const saved = localStorage.getItem("jason-ai-image-settings");
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+
+    if (data.model) setModel(data.model);
+    if (Array.isArray(data.params)) setParams(data.params);
+  } catch {}
+}, []);
+  useEffect(() => {
+  try {
+    localStorage.setItem(
+      "jason-ai-image-settings",
+      JSON.stringify({ model, params })
+    );
+  } catch {}
+}, [model, params]);
   return (
     <main>
       <h1>AI Image Studio</h1>
@@ -104,6 +126,9 @@ function removeParam(index) {
 
 <button type="button" onClick={addParam}>
   + Add Parameter
+</button>
+  <button type="button" onClick={resetDefaults}>
+  ↻ Reset Defaults
 </button>
       </section>
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const defaultParams = [
   { key: "aspect_ratio", value: "1:1", type: "string" },
-  { key: "size", value: "2K", type: "string" },
+  { key: "quality", value: "basic", type: "string"  },
   { key: "output_format", value: "png", type: "string" },
   { key: "nsfw_checker", value: "false", type: "boolean" },
 ];

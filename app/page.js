@@ -16,7 +16,24 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [files, setFiles] = useState([]);
   const [params, setParams] = useState(defaultParams);
+function updateParam(index, field, value) {
+  setParams((old) =>
+    old.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    )
+  );
+}
 
+function addParam() {
+  setParams((old) => [
+    ...old,
+    { key: "", value: "", type: "string" },
+  ]);
+}
+
+function removeParam(index) {
+  setParams((old) => old.filter((_, i) => i !== index));
+}
   return (
     <main>
       <h1>AI Image Studio</h1>
@@ -54,12 +71,40 @@ export default function Home() {
         <label>GENERATION PARAMETERS</label>
 
         {params.map((param, index) => (
-          <div key={index}>
-            <input value={param.key} readOnly />
-            <input value={param.value} readOnly />
-            <input value={param.type} readOnly />
-          </div>
-        ))}
+  <div key={index}>
+    <input
+      value={param.key}
+      onChange={(e) =>
+        updateParam(index, "key", e.target.value)
+      }
+    />
+
+    <input
+      value={param.value}
+      onChange={(e) =>
+        updateParam(index, "value", e.target.value)
+      }
+    />
+
+    <input
+      value={param.type}
+      onChange={(e) =>
+        updateParam(index, "type", e.target.value)
+      }
+    />
+
+    <button
+      type="button"
+      onClick={() => removeParam(index)}
+    >
+      ×
+    </button>
+  </div>
+))}
+
+<button type="button" onClick={addParam}>
+  + Add Parameter
+</button>
       </section>
 
       <button type="button">

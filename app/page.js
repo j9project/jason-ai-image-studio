@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const defaultParams = [
   { key: "aspect_ratio", value: "1:1", type: "string" },

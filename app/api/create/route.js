@@ -34,10 +34,12 @@ export async function POST(request) {
         body: JSON.stringify({
           model,
           input: {
-            prompt,
-            image_urls,
-            ...params,
-          },
+  prompt,
+  ...(model === "wan/2-7-image"
+    ? { input_urls: image_urls }
+    : { image_urls }),
+  ...params,
+},
         }),
       }
     );

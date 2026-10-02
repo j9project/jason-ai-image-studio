@@ -19,7 +19,20 @@ export default function Home() {
   const [status, setStatus] = useState("");
 const [resultUrl, setResultUrl] = useState("");
 const [isGenerating, setIsGenerating] = useState(false);
-function updateParam(index, field, value) {
+function useSeedream5() {
+  setModel("seedream/5-flash-image-to-image");
+  setParams(defaultParams.map((item) => ({ ...item })));
+}
+  function useWan27() {
+  setModel("wan/2-7-image");
+  setParams([
+    { key: "resolution", value: "1K", type: "string" },
+    { key: "aspect_ratio", value: "1:1", type: "string" },
+    { key: "n", value: "1", type: "number" },
+    { key: "nsfw_checker", value: "false", type: "boolean" },
+  ]);
+}
+  function updateParam(index, field, value) {
   setParams((old) =>
     old.map((item, i) =>
       i === index ? { ...item, [field]: value } : item
@@ -196,6 +209,12 @@ function buildParams() {
           value={model}
           onChange={(e) => setModel(e.target.value)}
         />
+        <button type="button" onClick={useSeedream5}>
+  Seedream 5
+</button>
+            <button type="button" onClick={useWan27}>
+  WAN 2.7
+</button>
       </section>
 
       <section>

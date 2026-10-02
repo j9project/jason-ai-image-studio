@@ -15,6 +15,7 @@ export default function Home() {
   );
   const [prompt, setPrompt] = useState("");
   const [files, setFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [params, setParams] = useState(defaultParams);
   const [status, setStatus] = useState("");
 const [resultUrl, setResultUrl] = useState("");
@@ -223,9 +224,33 @@ function buildParams() {
           type="file"
           accept="image/*"
           multiple
-          onChange={(e) => setFiles(Array.from(e.target.files))}
+          onChange={(e) => {
+  const selected = Array.from(e.target.files);
+  setFiles(selected);
+            
+  setPreviews(selected.map((file) => URL.createObjectURL(file)));}}
+
         />
         <small>{files.length} image(s) selected</small>
+  <div>
+  {previews.map((src, index) => (
+    <div key={src}>
+      <strong>Image {index + 1}</strong>
+      <img
+        src={src}
+        alt={`Image ${index + 1}`}
+        style={{
+          width: "120px",
+          height: "120px",
+          objectFit: "cover",
+          borderRadius: "10px",
+          display: "block",
+          marginTop: "6px",
+        }}
+      />
+    </div>
+  ))}
+</div>
       </section>
 
       <section>

@@ -17,7 +17,163 @@ body {
 
 button,
 input,
-textarea,
-select {
+textarea {
   font: inherit;
+}
+
+main {
+  width: min(100% - 28px, 760px);
+  margin: 0 auto;
+  padding: 34px 0 70px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(30px, 8vw, 48px);
+  line-height: 1;
+  letter-spacing: -1.5px;
+}
+
+main > p {
+  margin: 12px 0 30px;
+  color: #8f9bad;
+  font-size: 14px;
+}
+
+section {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  color: #aeb8c8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+input,
+textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 14px;
+  color: #f5f7fa;
+  background: #0b0e14;
+  border: 1px solid #293140;
+  border-radius: 11px;
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #7586ff;
+  box-shadow: 0 0 0 3px rgba(117, 134, 255, 0.12);
+}
+
+textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+small {
+  display: block;
+  margin-top: 9px;
+  color: #7f8a9c;
+}
+
+/* Model preset buttons */
+section:first-of-type button {
+  margin-top: 10px;
+  margin-right: 8px;
+}
+
+/* Parameter rows */
+section:nth-of-type(4) > div {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 0.85fr 42px;
+  gap: 8px;
+  margin-bottom: 9px;
+  align-items: center;
+}
+
+section:nth-of-type(4) > div input {
+  padding: 11px 10px;
+}
+
+/* Buttons */
+button {
+  min-height: 42px;
+  padding: 10px 15px;
+  color: #eef1f7;
+  background: #202633;
+  border: 1px solid #353e4f;
+  border-radius: 11px;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Generate button */
+main > button {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 4px;
+  background: #f3f5f8;
+  color: #0a0c10;
+  border: 0;
+  border-radius: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* Status */
+main > button + p {
+  margin: 16px 4px;
+  color: #aeb8c8;
+  font-size: 14px;
+}
+
+/* Result */
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  main {
+    width: min(100% - 22px, 760px);
+    padding-top: 26px;
+  }
+
+  section {
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  section:nth-of-type(4) > div {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  section:nth-of-type(4) > div input:nth-child(3) {
+    grid-column: 1 / 2;
+  }
+
+  section:nth-of-type(4) > div button {
+    grid-column: 2 / 3;
+  }
 }
